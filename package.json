@@ -4,6 +4,10 @@
   "description": "A customizable MDX docs framework for Next.js.",
   "type": "module",
   "license": "MIT",
+  "homepage": "https://docs.pzza.works",
+  "repository": { "type": "git", "url": "git+https://github.com/pzzaworks/pzza-docs.git" },
+  "bugs": { "url": "https://github.com/pzzaworks/pzza-docs/issues" },
+  "keywords": ["nextjs", "mdx", "documentation", "docs", "react"],
   "files": [
     "dist"
   ],

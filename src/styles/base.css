@@ -1427,3 +1427,112 @@ a.pd-card:hover {
   user-select: none;
   -webkit-user-select: none;
 }
+
+/* ---------- Icon alignment ----------
+   An icon next to a single line of text is wrapped at that line's height and the
+   row aligns to the top, so the icon centers on the first line even when the
+   text wraps. */
+
+.pd-callout-head {
+  align-items: flex-start;
+}
+.pd-callout-icon {
+  height: 20px;
+  margin-top: 0;
+}
+.pd-prose .pd-callout-title,
+.pd-callout-title {
+  margin: 0;
+  line-height: 20px;
+}
+.pd-callout[data-untitled] .pd-callout-head {
+  padding-block-start: 0;
+}
+.pd-callout[data-untitled] .pd-callout-icon {
+  height: calc(14px * 1.55);
+}
+
+.pd-card-head {
+  align-items: flex-start;
+}
+.pd-card-icon {
+  height: 20px;
+}
+.pd-card-title {
+  line-height: 20px;
+}
+
+.pd-sidebar-item,
+.pd-sidebar-folder-label,
+.pd-sidebar-separator,
+.pd-sidebar-root {
+  align-items: flex-start;
+}
+.pd-sidebar-item .pd-sidebar-item-text,
+.pd-sidebar-folder-label .pd-sidebar-item-text,
+.pd-sidebar-root .pd-sidebar-item-text {
+  line-height: var(--pd-row-height);
+}
+.pd-sidebar-separator .pd-sidebar-item-text {
+  line-height: 16px;
+}
+.pd-sidebar-icon,
+.pd-sidebar-external,
+.pd-sidebar-folder-toggle {
+  height: var(--pd-row-height);
+}
+.pd-sidebar-separator .pd-sidebar-icon {
+  height: 16px;
+}
+.pd-sidebar-folder-toggle {
+  width: 22px;
+  border-radius: var(--pd-radius);
+}
+
+.pd-accordion-trigger {
+  align-items: flex-start;
+  padding-block: 6px;
+  line-height: 24px;
+}
+.pd-accordion-chevron {
+  height: 24px;
+}
+
+/* Step number box centers on the first line: 20.8px for an h3, 25.5px for a paragraph. */
+.pd-step::before {
+  top: -1px;
+}
+.pd-step:has(> p:first-child)::before {
+  top: 2px;
+}
+
+.pd-search-item {
+  align-items: flex-start;
+}
+.pd-search-item > svg,
+.pd-search-item-icon {
+  height: 20px;
+}
+.pd-search-item-title {
+  line-height: 20px;
+}
+
+.pd-page-actions-item {
+  align-items: flex-start;
+  padding-block: 6px;
+  height: auto;
+  min-height: 32px;
+  line-height: 20px;
+}
+.pd-page-actions-item-icon,
+.pd-page-actions-item-external {
+  height: 20px;
+}
+
+.pd-powered-by-brand,
+.pd-powered-by {
+  line-height: 18px;
+}
+.pd-powered-by-mark {
+  height: 18px;
+}

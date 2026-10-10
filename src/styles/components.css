@@ -672,3 +672,11 @@ button.pd-sidebar-folder-label {
   font-size: 0.85em;
 }
 
+
+/* Untitled callouts: the icon wrapper matches the first body line, no extra offsets. */
+.pd-callout[data-untitled] .pd-callout-head {
+  padding-block-start: 0;
+}
+.pd-callout[data-untitled] .pd-callout-body {
+  margin-top: 0;
+}

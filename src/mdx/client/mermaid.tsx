@@ -14,7 +14,7 @@ export interface MermaidProps {
 type RenderState = { status: "loading" } | { status: "ready"; svg: string } | { status: "error"; message: string };
 
 /** Design tokens the diagram reads from the page so it follows the active preset and theme. */
-const TOKENS = ["background", "surface", "surface-2", "surface-3", "foreground", "foreground-2", "muted-foreground", "border", "border-strong", "font-sans"] as const;
+const TOKENS = ["background", "surface", "surface-2", "surface-3", "foreground", "foreground-2", "muted-foreground", "faint-foreground", "border", "border-strong", "font-sans"] as const;
 type Token = (typeof TOKENS)[number];
 
 function readTokens(): Record<Token, string> {
@@ -36,8 +36,8 @@ function flatThemeCss(tokens: Record<Token, string>): string {
     `.node rect, .cluster rect, .actor, .labelBox, .note, rect.note { rx: 4px; ry: 4px; }`,
     `.cluster rect { fill: ${tokens.background}; stroke: ${tokens.border}; }`,
     `.cluster-label text, .cluster span { fill: ${tokens["muted-foreground"]}; color: ${tokens["muted-foreground"]}; font-size: 12px; }`,
-    `.edgePaths .path, .flowchart-link, .messageLine0, .messageLine1, .transition, .relation, line.loopLine, .actor-line { stroke: ${tokens["border-strong"]}; stroke-width: 1px; }`,
-    `.arrowheadPath, .marker, marker path, #arrowhead path, #filled-head path, #crosshead path, #sequencenumber { fill: ${tokens["border-strong"]}; stroke: ${tokens["border-strong"]}; }`,
+    `.edgePaths .path, .flowchart-link, .messageLine0, .messageLine1, .transition, .relation, line.loopLine, .actor-line { stroke: ${tokens["faint-foreground"]}; stroke-width: 1px; }`,
+    `.arrowheadPath, .marker, marker path, #arrowhead path, #filled-head path, #crosshead path, #sequencenumber { fill: ${tokens["faint-foreground"]}; stroke: ${tokens["faint-foreground"]}; }`,
     `.edgeLabel, .edgeLabel p, .edgeLabel rect { background-color: ${tokens.surface}; fill: ${tokens.surface}; opacity: 1; }`,
     `.edgeLabel, .messageText, .loopText, .noteText, .stateLabel, .edgeLabel .label text { font-size: 12px; }`,
     `.messageText, .loopText, .loopText tspan { fill: ${tokens["muted-foreground"]}; }`,
@@ -49,7 +49,7 @@ function flatThemeCss(tokens: Record<Token, string>): string {
     `.sequenceNumber { fill: ${tokens.background}; }`,
     `.statediagram-state rect, .statediagram-cluster rect { rx: 4px; ry: 4px; }`,
     `.statediagram-state .divider { stroke: ${tokens.border}; }`,
-    `.node circle.state-start, .node .state-end, .start-state, .end-state { fill: ${tokens["muted-foreground"]}; stroke: ${tokens["muted-foreground"]}; }`,
+    `.node circle.state-start, .node .state-end, .start-state, .end-state { fill: ${tokens["faint-foreground"]}; stroke: ${tokens["faint-foreground"]}; }`,
     `.commit-label, .branchLabel, .tag-label { font-size: 11px; }`,
     `.arrow { stroke-width: 2px; }`,
     `.branch { stroke-width: 1px; stroke-dasharray: 2 4; }`,
@@ -104,7 +104,7 @@ export function Mermaid({ chart, title, className }: MermaidProps) {
             tertiaryColor: tokens["surface-3"],
             tertiaryTextColor: tokens.foreground,
             tertiaryBorderColor: tokens.border,
-            lineColor: tokens["border-strong"],
+            lineColor: tokens["faint-foreground"],
             textColor: tokens.foreground,
             mainBkg: tokens["surface-2"],
             nodeBorder: tokens["border-strong"],
@@ -119,7 +119,7 @@ export function Mermaid({ chart, title, className }: MermaidProps) {
             actorBorder: tokens["border-strong"],
             actorTextColor: tokens.foreground,
             actorLineColor: tokens.border,
-            signalColor: tokens["border-strong"],
+            signalColor: tokens["faint-foreground"],
             signalTextColor: tokens.foreground,
             labelBoxBkgColor: tokens["surface-2"],
             labelBoxBorderColor: tokens["border-strong"],
@@ -137,10 +137,10 @@ export function Mermaid({ chart, title, className }: MermaidProps) {
             pieLegendTextColor: tokens.foreground,
             pieStrokeColor: tokens.background,
             pieOuterStrokeColor: tokens.border,
-            git0: tokens["muted-foreground"],
-            git1: tokens["foreground-2"],
-            git2: tokens["border-strong"],
-            git3: tokens.foreground,
+            git0: tokens["faint-foreground"],
+            git1: tokens["faint-foreground"],
+            git2: tokens["faint-foreground"],
+            git3: tokens["faint-foreground"],
             gitBranchLabel0: tokens.foreground,
             gitBranchLabel1: tokens.foreground,
             gitBranchLabel2: tokens.foreground,

@@ -27,6 +27,36 @@ function readTokens(): Record<Token, string> {
 let counter = 0;
 
 /**
+ * Flat overrides on top of Mermaid's base theme: no shadows, hairline strokes,
+ * 4px corners, and arrowheads in the same colour as their lines.
+ */
+function flatThemeCss(tokens: Record<Token, string>): string {
+  return [
+    `.node rect, .node polygon, .node circle, .node ellipse, .node path, .cluster rect { stroke-width: 1px; filter: none; }`,
+    `.node rect, .cluster rect, .actor, .labelBox, .note, rect.note { rx: 4px; ry: 4px; }`,
+    `.cluster rect { fill: ${tokens.background}; stroke: ${tokens.border}; }`,
+    `.cluster-label text, .cluster span { fill: ${tokens["muted-foreground"]}; color: ${tokens["muted-foreground"]}; font-size: 12px; }`,
+    `.edgePaths .path, .flowchart-link, .messageLine0, .messageLine1, .transition, .relation, line.loopLine, .actor-line { stroke: ${tokens["border-strong"]}; stroke-width: 1px; }`,
+    `.arrowheadPath, .marker, marker path, #arrowhead path, #filled-head path, #crosshead path, #sequencenumber { fill: ${tokens["border-strong"]}; stroke: ${tokens["border-strong"]}; }`,
+    `.edgeLabel, .edgeLabel p, .edgeLabel rect { background-color: ${tokens.surface}; fill: ${tokens.surface}; opacity: 1; }`,
+    `.edgeLabel, .messageText, .loopText, .noteText, .stateLabel, .edgeLabel .label text { font-size: 12px; }`,
+    `.messageText, .loopText, .loopText tspan { fill: ${tokens["muted-foreground"]}; }`,
+    `.actor { fill: ${tokens["surface-2"]}; stroke: ${tokens["border-strong"]}; }`,
+    `text.actor > tspan { font-size: 13px; }`,
+    `.actor-line { stroke-dasharray: 2 4; }`,
+    `.labelBox { fill: ${tokens["surface-2"]}; stroke: ${tokens["border-strong"]}; }`,
+    `.activation0, .activation1, .activation2 { fill: ${tokens["surface-3"]}; stroke: ${tokens["border-strong"]}; }`,
+    `.sequenceNumber { fill: ${tokens.background}; }`,
+    `.statediagram-state rect, .statediagram-cluster rect { rx: 4px; ry: 4px; }`,
+    `.statediagram-state .divider { stroke: ${tokens.border}; }`,
+    `.node circle.state-start, .node .state-end, .start-state, .end-state { fill: ${tokens["muted-foreground"]}; stroke: ${tokens["muted-foreground"]}; }`,
+    `.commit-label, .branchLabel, .tag-label { font-size: 11px; }`,
+    `.commit-bullets circle { stroke-width: 2px; }`,
+    `.mermaid-main-font, .label, text, tspan { font-family: ${tokens["font-sans"]}; }`,
+  ].join("\n");
+}
+
+/**
  * Renders a Mermaid diagram on the client. The library is loaded on demand so
  * pages without diagrams never ship it, and the colours come from the `--pd-*`
  * tokens so diagrams stay monochrome and switch with the theme.
@@ -49,8 +79,14 @@ export function Mermaid({ chart, title, className }: MermaidProps) {
           startOnLoad: false,
           securityLevel: "strict",
           theme: "base",
+          // The default "neo" look adds drop shadows; classic shapes stay flat.
+          look: "classic",
+          themeCSS: flatThemeCss(tokens),
           fontFamily: tokens["font-sans"],
           darkMode: dark,
+          flowchart: { padding: 12, nodeSpacing: 40, rankSpacing: 48 },
+          sequence: { actorMargin: 48, width: 120, height: 40, boxMargin: 8, messageMargin: 32, mirrorActors: false, actorFontSize: 13, messageFontSize: 12, noteFontSize: 12 },
+          gitGraph: { rotateCommitLabel: false },
           themeVariables: {
             background: tokens.background,
             fontFamily: tokens["font-sans"],
@@ -64,7 +100,7 @@ export function Mermaid({ chart, title, className }: MermaidProps) {
             tertiaryColor: tokens["surface-3"],
             tertiaryTextColor: tokens.foreground,
             tertiaryBorderColor: tokens.border,
-            lineColor: tokens["muted-foreground"],
+            lineColor: tokens["border-strong"],
             textColor: tokens.foreground,
             mainBkg: tokens["surface-2"],
             nodeBorder: tokens["border-strong"],
@@ -79,7 +115,7 @@ export function Mermaid({ chart, title, className }: MermaidProps) {
             actorBorder: tokens["border-strong"],
             actorTextColor: tokens.foreground,
             actorLineColor: tokens.border,
-            signalColor: tokens.foreground,
+            signalColor: tokens["border-strong"],
             signalTextColor: tokens.foreground,
             labelBoxBkgColor: tokens["surface-2"],
             labelBoxBorderColor: tokens["border-strong"],

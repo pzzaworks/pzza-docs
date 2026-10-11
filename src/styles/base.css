@@ -74,6 +74,17 @@ body {
 html {
   color-scheme: light;
 }
+/* Sticky chrome needs the viewport to be the scroll container. Sites often clip
+   horizontal overflow on both html and body, which turns body into the scroller
+   and lets the header, sidebar and TOC scroll away. On docs pages the clipping is
+   kept on the viewport (via html) and body is left alone. Important wins over
+   unlayered site CSS, and :has() scopes it to pages that render the layout. */
+html:has(.pd-layout) {
+  overflow-x: hidden !important;
+}
+body:has(.pd-layout) {
+  overflow-x: visible !important;
+}
 html.dark,
 html[data-theme="dark"] {
   color-scheme: dark;

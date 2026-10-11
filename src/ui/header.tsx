@@ -43,7 +43,7 @@ function Logo({ config }: { config: DocsConfig }) {
     mark = logo;
   }
   return (
-    <Link href="/" className="pd-logo" aria-label={config.title}>
+    <Link href={config.homeUrl ?? "/"} className="pd-logo" aria-label={config.title}>
       {mark ? <span className="pd-logo-mark">{mark}</span> : null}
       <span className="pd-logo-text">{config.title}</span>
     </Link>

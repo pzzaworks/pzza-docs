@@ -222,6 +222,8 @@ export interface DocsConfig {
   description?: string;
   /** A React node (for example an inline SVG) or an image descriptor. Rendered next to the wordmark. */
   logo?: ReactNode | ImageLogo;
+  /** Where the logo links. Defaults to "/"; localized sites pass the locale's home. */
+  homeUrl?: string;
   /** Directory containing the MDX files, relative to `process.cwd()`. Defaults to "content/docs". */
   contentDir?: string;
   /** Route prefix where the docs pages are mounted. Defaults to "/docs". */

@@ -790,3 +790,73 @@ button.pd-sidebar-folder-label {
 .pd-preset-name {
   line-height: 1;
 }
+
+/* ---------- Locale switcher ---------- */
+
+.pd-locale-switcher {
+  position: relative;
+  display: inline-flex;
+}
+.pd-locale-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding-inline: 8px;
+  border: 1px solid var(--pd-border);
+  border-radius: var(--pd-radius);
+  background: var(--pd-surface);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--pd-foreground);
+  cursor: pointer;
+  user-select: none;
+  transition: border-color var(--pd-transition), background-color var(--pd-transition);
+}
+.pd-locale-trigger:hover,
+.pd-locale-trigger[aria-expanded="true"] {
+  border-color: var(--pd-border-strong);
+  background: var(--pd-surface-2);
+}
+.pd-locale-trigger:focus-visible {
+  outline: 2px solid var(--pd-ring);
+  outline-offset: 2px;
+}
+.pd-locale-chevron {
+  color: var(--pd-muted-foreground);
+}
+.pd-locale-icon {
+  display: inline-flex;
+  align-items: center;
+  width: 16px;
+  height: 16px;
+}
+.pd-locale-icon > * {
+  width: 16px;
+  height: auto;
+  border-radius: 2px;
+}
+.pd-locale-menu {
+  min-width: 180px;
+}
+.pd-locale-item {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  user-select: none;
+}
+.pd-locale-item[aria-checked="true"] {
+  font-weight: 500;
+}
+.pd-locale-check {
+  flex: 0 0 auto;
+  color: var(--pd-muted-foreground);
+}
+.pd-locale-item:focus-visible {
+  outline: none;
+  background: var(--pd-surface-2);
+}

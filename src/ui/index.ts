@@ -15,6 +15,8 @@ export type { PaginationProps } from "./client/pagination.js";
 export { RootProviderClient, useSearch } from "./client/root-provider.js";
 export type { RootProviderClientProps, SearchContextValue } from "./client/root-provider.js";
 export { LabelsProvider, useLabels } from "./client/labels.js";
+export { LocaleSwitcher } from "./client/locale-switcher.js";
+export type { LocaleOption, LocaleSwitcherProps } from "./client/locale-switcher.js";
 export type { LabelsProviderProps } from "./client/labels.js";
 export { RootProvider } from "./root-provider.js";
 export type { RootProviderProps } from "./root-provider.js";

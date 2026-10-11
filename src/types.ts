@@ -212,6 +212,8 @@ export interface UiLabels {
   zoomImage: string;
   closeImage: string;
   dismiss: string;
+  /** Accessible name of the locale switcher. */
+  selectLanguage: string;
 }
 
 /** Where `lastModified` comes from: git commit time, filesystem mtime or nothing. Defaults to "git". */

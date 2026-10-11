@@ -33,6 +33,7 @@ export const DEFAULT_LABELS: UiLabels = {
   zoomImage: "Zoom image",
   closeImage: "Close image",
   dismiss: "Dismiss",
+  selectLanguage: "Select language",
 };
 
 /** Fills a template such as `Open in {name}`. */

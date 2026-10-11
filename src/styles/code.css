@@ -263,7 +263,7 @@
 }
 .pd-code-tab-trigger[data-state="active"] {
   color: var(--pd-foreground);
-  border-bottom-color: var(--pd-foreground);
+  border-bottom-color: var(--pd-accent);
 }
 .pd-code-tab-trigger:focus-visible {
   outline: 2px solid var(--pd-ring);

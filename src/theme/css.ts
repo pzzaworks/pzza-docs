@@ -1,22 +1,8 @@
-import type { ResolvedThemeConfig, ThemeColors, ThemeDensity } from "../types.js";
+import type { ResolvedThemeConfig, ThemeDensity } from "../types.js";
+import { block, colorDeclarations, toCssValue } from "./presets.js";
 import { THEME_PRESETS } from "./presets.js";
 
-/** Token name for every color key. */
-export const COLOR_TOKENS: Record<keyof ThemeColors, string> = {
-  background: "--pd-background",
-  surface: "--pd-surface",
-  surface2: "--pd-surface-2",
-  surface3: "--pd-surface-3",
-  foreground: "--pd-foreground",
-  foreground2: "--pd-foreground-2",
-  mutedForeground: "--pd-muted-foreground",
-  faintForeground: "--pd-faint-foreground",
-  border: "--pd-border",
-  borderStrong: "--pd-border-strong",
-  sidebar: "--pd-sidebar",
-  ring: "--pd-ring",
-  overlay: "--pd-overlay",
-};
+export { COLOR_TOKENS, presetCss } from "./presets.js";
 
 /** Spacing tokens per density. "comfortable" matches the stylesheet defaults. */
 export const DENSITY_TOKENS: Record<ThemeDensity, Record<string, string>> = {
@@ -47,19 +33,7 @@ export interface ThemeTokens {
   dark: Record<string, string>;
 }
 
-/** Numbers are pixels; strings are used as written. Characters that could break out of a declaration are dropped. */
-export function toCssValue(value: number | string): string {
-  if (typeof value === "number") return `${value}px`;
-  return value.replace(/[;{}]/g, "").trim();
-}
-
-function colorDeclarations(colors: Partial<ThemeColors> | undefined, into: Record<string, string>): void {
-  if (!colors) return;
-  for (const key of Object.keys(COLOR_TOKENS) as (keyof ThemeColors)[]) {
-    const value = colors[key];
-    if (typeof value === "string" && value.trim() !== "") into[COLOR_TOKENS[key]] = toCssValue(value);
-  }
-}
+export { toCssValue } from "./presets.js";
 
 /**
  * Resolves the custom properties a theme config needs on top of the stylesheet
@@ -98,11 +72,6 @@ export function resolveThemeTokens(theme: ResolvedThemeConfig): ThemeTokens {
   return { root, dark };
 }
 
-function block(selector: string, declarations: Record<string, string>): string {
-  const entries = Object.entries(declarations);
-  if (entries.length === 0) return "";
-  return `${selector}{${entries.map(([name, value]) => `${name}:${value}`).join(";")}}`;
-}
 
 /** CSS text for a `<style>` element; empty when the config changes nothing. */
 export function resolveThemeCss(theme: ResolvedThemeConfig): string {

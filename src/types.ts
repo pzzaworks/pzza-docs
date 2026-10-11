@@ -55,6 +55,10 @@ export interface ThemeColors {
   sidebar: string;
   ring: string;
   overlay: string;
+  /** Links, active tab underlines and other emphasis. Equals `foreground` in the gray presets. */
+  accent: string;
+  /** Text placed on an accent background. */
+  accentForeground: string;
 }
 
 /** Token groups of the bundled code themes (`pzza-light` / `pzza-dark`). */
@@ -76,7 +80,7 @@ export interface CodeTokenColors {
   background: string;
 }
 
-export type ThemePreset = "mono" | "slate" | "warm" | "contrast";
+export type ThemePreset = "mono" | "slate" | "warm" | "contrast" | "ocean" | "dusk" | "forest" | "ember" | "rose";
 export type ThemeDensity = "compact" | "comfortable";
 
 export interface ThemeFonts {
@@ -105,7 +109,7 @@ export interface ThemeConfig {
   defaultTheme?: ThemeName;
   /** Pressing "D" outside inputs toggles light/dark. Defaults to true. */
   hotKey?: boolean;
-  /** Built-in gray palette applied before `colors`. Defaults to "mono". */
+  /** Built-in palette applied before `colors`. Defaults to "mono". */
   preset?: ThemePreset;
   /** Token overrides for each color scheme. Only the keys you set are emitted. */
   colors?: { light?: Partial<ThemeColors>; dark?: Partial<ThemeColors> };

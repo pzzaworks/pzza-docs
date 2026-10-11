@@ -16,6 +16,8 @@
   --pd-border-strong: #cfcfcf;
   --pd-sidebar: #fafafa;
   --pd-ring: #111111;
+  --pd-accent: #111111;
+  --pd-accent-foreground: #fafafa;
   --pd-overlay: rgba(0, 0, 0, 0.4);
 
   --pd-radius: 4px;
@@ -50,6 +52,8 @@
   --pd-border-strong: #343434;
   --pd-sidebar: #0c0c0c;
   --pd-ring: #ececec;
+  --pd-accent: #ececec;
+  --pd-accent-foreground: #0c0c0c;
   --pd-overlay: rgba(0, 0, 0, 0.6);
 }
 
@@ -258,7 +262,7 @@ html[data-theme="dark"] {
   inset-inline: 10px;
   bottom: -1px;
   height: 1.5px;
-  background: var(--pd-foreground);
+  background: var(--pd-accent);
 }
 
 .pd-search-trigger {
@@ -695,7 +699,7 @@ a.pd-breadcrumb:hover {
 }
 
 .pd-prose a:not(.pd-card, .pd-anchor, .pd-inline-toc-link, .pd-toc-link) {
-  color: var(--pd-foreground);
+  color: var(--pd-accent);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-decoration-color: var(--pd-border-strong);
@@ -703,8 +707,8 @@ a.pd-breadcrumb:hover {
   transition: color var(--pd-transition), text-decoration-color var(--pd-transition);
 }
 .pd-prose a:not(.pd-card, .pd-anchor, .pd-inline-toc-link, .pd-toc-link):hover {
-  color: var(--pd-foreground);
-  text-decoration-color: var(--pd-foreground);
+  color: var(--pd-accent);
+  text-decoration-color: var(--pd-accent);
 }
 
 .pd-prose ul,
@@ -911,7 +915,7 @@ a.pd-card:hover {
 .pd-tab-trigger[data-state="active"],
 .pd-tab-trigger[aria-selected="true"] {
   color: var(--pd-foreground);
-  border-bottom-color: var(--pd-foreground);
+  border-bottom-color: var(--pd-accent);
 }
 .pd-tab-panel {
   padding-top: 12px;

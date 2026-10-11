@@ -731,3 +731,62 @@ button.pd-sidebar-folder-label {
 .pd-prose .katex {
   font-size: 1.05em;
 }
+
+/* ---------- Theme preset picker ---------- */
+
+.pd-preset-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 20px;
+}
+.pd-preset-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 10px 0 6px;
+  border: 1px solid var(--pd-border);
+  border-radius: var(--pd-radius);
+  background: var(--pd-surface);
+  font-family: var(--pd-font-sans);
+  font-size: 13px;
+  color: var(--pd-foreground-2);
+  cursor: pointer;
+  user-select: none;
+  transition: border-color var(--pd-transition), background-color var(--pd-transition), color var(--pd-transition);
+}
+.pd-preset-option:hover {
+  border-color: var(--pd-border-strong);
+  color: var(--pd-foreground);
+}
+.pd-preset-option[data-active] {
+  border-color: var(--pd-foreground);
+  color: var(--pd-foreground);
+}
+.pd-preset-option:focus-visible {
+  outline: 2px solid var(--pd-ring);
+  outline-offset: 2px;
+}
+.pd-preset-swatch {
+  display: inline-flex;
+  gap: 2px;
+}
+.pd-preset-swatch > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid;
+  border-radius: var(--pd-radius-sm);
+}
+.pd-preset-swatch i {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+}
+.pd-preset-name {
+  line-height: 1;
+}

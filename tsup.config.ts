@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, writeFile } from "node:fs/promises";
 import { basename } from "node:path";
 import { glob } from "node:fs/promises";
 import { defineConfig, type Options } from "tsup";
@@ -47,6 +47,10 @@ export default defineConfig(async () => [
         `@layer pzzadocs.utilities {\n${utilities}\n}`,
       ].join("\n");
       await writeFile("dist/styles.css", css);
+      // KaTeX ships its own stylesheet and fonts; they are published next to styles.css
+      // so `pzzadocs/math.css` resolves the font URLs without extra consumer setup.
+      await cp("node_modules/katex/dist/katex.min.css", "dist/math.css");
+      await cp("node_modules/katex/dist/fonts", "dist/fonts", { recursive: true });
     },
   },
   {

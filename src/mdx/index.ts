@@ -4,6 +4,7 @@ import { Callout } from "./callout.js";
 import { Card, Cards } from "./cards.js";
 import { CodeTabs } from "./client/code-tabs.js";
 import { ImageZoom } from "./client/image-zoom.js";
+import { Mermaid } from "./client/mermaid.js";
 import { Tab, Tabs } from "./client/tabs.js";
 import { CodeBlock, Pre } from "./code.js";
 import { Anchor, Table } from "./elements.js";
@@ -25,6 +26,8 @@ export { CodeTabs } from "./client/code-tabs.js";
 export type { CodeTabsProps } from "./client/code-tabs.js";
 export { ImageZoom } from "./client/image-zoom.js";
 export type { ImageZoomProps } from "./client/image-zoom.js";
+export { Mermaid } from "./client/mermaid.js";
+export type { MermaidProps } from "./client/mermaid.js";
 export { Tab, Tabs } from "./client/tabs.js";
 export type { TabProps, TabsProps } from "./client/tabs.js";
 export { CopyButton } from "./client/copy-button.js";
@@ -69,6 +72,7 @@ export const defaultMdxComponents: MDXComponents = {
   Heading,
   ImageZoom,
   InlineTOC,
+  Mermaid,
   Step,
   Steps,
   Tab,

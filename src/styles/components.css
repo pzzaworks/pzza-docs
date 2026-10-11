@@ -680,3 +680,54 @@ button.pd-sidebar-folder-label {
 .pd-callout[data-untitled] .pd-callout-body {
   margin-top: 0;
 }
+
+/* ---------- Mermaid diagrams ---------- */
+
+.pd-mermaid {
+  margin: 0 0 20px;
+  padding: 16px;
+  border: 1px solid var(--pd-border);
+  border-radius: var(--pd-radius);
+  background: var(--pd-surface);
+  overflow-x: auto;
+}
+.pd-mermaid-diagram {
+  display: flex;
+  justify-content: center;
+  min-height: 48px;
+}
+.pd-mermaid-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+.pd-mermaid-error {
+  margin: 0;
+  font-family: var(--pd-font-mono);
+  font-size: 12px;
+  white-space: pre-wrap;
+  color: var(--pd-muted-foreground);
+}
+.pd-mermaid-title {
+  margin-top: 12px;
+  font-size: 12px;
+  text-align: center;
+  color: var(--pd-muted-foreground);
+}
+
+/* ---------- Math (KaTeX) ---------- */
+
+.pd-prose .katex-display {
+  margin: 0 0 20px;
+  padding: 12px 16px;
+  border: 1px solid var(--pd-border);
+  border-radius: var(--pd-radius);
+  background: var(--pd-surface);
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.pd-prose .katex-display > .katex {
+  white-space: nowrap;
+}
+.pd-prose .katex {
+  font-size: 1.05em;
+}

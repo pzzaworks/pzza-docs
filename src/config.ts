@@ -46,6 +46,10 @@ export function defineConfig(config: DocsConfig): ResolvedDocsConfig {
       enabled: config.llm?.enabled ?? true,
       markdownPath: config.llm?.markdownPath ?? defaultMarkdownPath,
     },
+    math: {
+      enabled: config.math?.enabled ?? true,
+      singleDollar: config.math?.singleDollar ?? false,
+    },
     sidebar: {
       defaultOpenLevel: config.sidebar?.defaultOpenLevel ?? 0,
       prefetch: config.sidebar?.prefetch ?? true,

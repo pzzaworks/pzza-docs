@@ -53,13 +53,14 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
 }
 ```
 
-Write content in `content/docs/*.mdx`, order it with `meta.json`, and import `pzzadocs/styles.css` once in your root layout.
+Write content in `content/docs/*.mdx`, order it with `meta.json`, and import `pzzadocs/styles.css` (and `pzzadocs/math.css` for formulas) once in your root layout.
 
 ## Core Features
 
 - **File-based Content**: MDX and Markdown pages with frontmatter, `meta.json` ordering, route groups, root folders, and locales
 - **Built-in Components**: Callout, Tabs, Steps, Cards, Accordion, Type Table, Files, Banner, and Image Zoom available in every page
 - **Code Blocks**: Dual light and dark highlighting, line numbers, highlight and diff markers, tabbed fences, and package manager tabs
+- **Diagrams and Math**: Mermaid fences render as theme-aware diagrams and TeX math renders with KaTeX
 - **Search**: Structured client-side index over pages, headings, and paragraphs with a command palette
 - **Theming**: Plain CSS tokens with presets, density, fonts, and radius configured from one object, no utility framework required
 - **LLM Outputs**: `llms.txt`, `llms-full.txt`, per-page Markdown, and copy or open-in-assistant page actions

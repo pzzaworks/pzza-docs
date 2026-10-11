@@ -5,9 +5,20 @@
   "type": "module",
   "license": "MIT",
   "homepage": "https://docs.pzza.works",
-  "repository": { "type": "git", "url": "git+https://github.com/pzzaworks/pzza-docs.git" },
-  "bugs": { "url": "https://github.com/pzzaworks/pzza-docs/issues" },
-  "keywords": ["nextjs", "mdx", "documentation", "docs", "react"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pzzaworks/pzza-docs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pzzaworks/pzza-docs/issues"
+  },
+  "keywords": [
+    "nextjs",
+    "mdx",
+    "documentation",
+    "docs",
+    "react"
+  ],
   "files": [
     "dist"
   ],
@@ -27,7 +38,8 @@
       "types": "./dist/mdx/index.d.ts",
       "import": "./dist/mdx/index.js"
     },
-    "./styles.css": "./dist/styles.css"
+    "./styles.css": "./dist/styles.css",
+    "./math.css": "./dist/math.css"
   },
   "scripts": {
     "build": "rm -rf dist && tsup",
@@ -46,12 +58,16 @@
     "github-slugger": "2.0.0",
     "gray-matter": "4.0.3",
     "hast-util-to-string": "3.0.1",
+    "katex": "0.19.0",
     "lucide-react": "1.55.0",
     "mdast-util-to-string": "4.0.0",
+    "mermaid": "12.1.0",
     "next-themes": "0.4.6",
+    "rehype-katex": "7.0.1",
     "rehype-slug": "6.0.0",
     "remark-frontmatter": "5.0.0",
     "remark-gfm": "4.0.1",
+    "remark-math": "6.0.0",
     "server-only": "0.0.1",
     "shiki": "4.5.0",
     "unist-util-visit": "5.1.0"

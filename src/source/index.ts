@@ -94,7 +94,7 @@ export function createSourceWithComponents(config: ResolvedDocsConfig, component
     const cached = compiledCache.get(data.path);
     if (cached && cached.mtimeMs === mtimeMs) return cached;
 
-    const { toc, content, structure } = await compileMdx(loaded.body, loaded.page.path, components, { toc: config.toc, codeThemes });
+    const { toc, content, structure } = await compileMdx(loaded.body, loaded.page.path, components, { toc: config.toc, codeThemes, math: config.math });
     const entry: CompiledCacheEntry = { mtimeMs, page: { ...loaded.page, toc, content }, structure };
     compiledCache.set(data.path, entry);
     return entry;

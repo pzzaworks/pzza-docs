@@ -8,6 +8,7 @@ import { convertCommands, PACKAGE_MANAGERS } from "./code/package-manager.js";
 
 const PACKAGE_INSTALL_LANGS = new Set(["package-install", "npm"]);
 const PACKAGE_MANAGER_GROUP = "package-manager";
+const MERMAID_LANG = "mermaid";
 
 function languageOf(code: Element): string | undefined {
   const className = code.properties["className"];
@@ -73,6 +74,16 @@ async function highlightBlock({ lang, source, meta, rawMeta }: HighlightedBlock,
   props["dataLineStart"] = meta.lineStart;
   props["dataCode"] = cleanSource(pre);
   return pre;
+}
+
+/** A `mermaid` fence becomes the client-rendered diagram component instead of a highlighted block. */
+function mermaidDiagram(source: string, meta: CodeMeta): Element {
+  return {
+    type: "element",
+    tagName: "Mermaid",
+    properties: { chart: source, ...(meta.title ? { title: meta.title } : {}) },
+    children: [],
+  };
 }
 
 function codeTabs(pres: Element[], group: string | undefined): Element {
@@ -166,6 +177,11 @@ export function rehypeShiki(options: RehypeShikiOptions = {}) {
       const rawMeta = metaOf(code) ?? "";
       const meta = parseCodeMeta(rawMeta);
       const source = toString(code).replace(/\n$/, "");
+
+      if (rawLang === MERMAID_LANG) {
+        parent.children[index] = mermaidDiagram(source, meta);
+        return;
+      }
 
       const job = PACKAGE_INSTALL_LANGS.has(rawLang)
         ? packageInstallTabs(source, meta, options.themes)

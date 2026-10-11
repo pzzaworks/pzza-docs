@@ -144,6 +144,13 @@ export interface LlmConfig {
   markdownPath?: (url: string) => string;
 }
 
+export interface MathConfig {
+  /** Parses TeX math (`$$ ... $$` blocks and inline) and renders it with KaTeX. Defaults to true. */
+  enabled?: boolean;
+  /** Also treats single-dollar spans (`$x$`) as inline math. Off by default so prices in prose stay text. */
+  singleDollar?: boolean;
+}
+
 export interface SidebarConfig {
   /** Folders at this depth or shallower start open (0 = only root-level folders are closed unless `defaultOpen`). Defaults to 0. */
   defaultOpenLevel?: number;
@@ -179,6 +186,7 @@ export interface DocsConfig {
   theme?: ThemeConfig;
   toc?: TocConfig;
   llm?: LlmConfig;
+  math?: MathConfig;
   sidebar?: SidebarConfig;
   header?: HeaderConfig;
   lastModified?: LastModifiedSource;
@@ -198,6 +206,7 @@ export interface ResolvedDocsConfig extends DocsConfig {
   theme: ResolvedThemeConfig;
   toc: Required<TocConfig>;
   llm: Required<LlmConfig>;
+  math: Required<MathConfig>;
   sidebar: Required<SidebarConfig>;
   header: Required<HeaderConfig>;
   lastModified: LastModifiedSource;

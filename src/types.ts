@@ -169,6 +169,51 @@ export interface HeaderConfig {
   transparentMode?: HeaderTransparentMode;
 }
 
+/** How translated content is laid out: `page.de.mdx` next to the source, or one directory per locale. */
+export type LocaleStrategy = "suffix" | "directory";
+
+/** Whether page URLs carry the locale: never, only for non-default locales, or always. */
+export type LocalePrefix = "never" | "as-needed" | "always";
+
+/** Every string the framework UI renders. Override per locale through `translations`. */
+export interface UiLabels {
+  search: string;
+  /** Header trigger text. */
+  searchShort: string;
+  searchPlaceholder: string;
+  /** Dialog accessible name. */
+  searchDialog: string;
+  searchResults: string;
+  searchLoading: string;
+  /** `{query}` is replaced with the typed text. */
+  searchNoResults: string;
+  searchError: string;
+  onThisPage: string;
+  previous: string;
+  next: string;
+  pagination: string;
+  breadcrumb: string;
+  lastUpdated: string;
+  copyMarkdown: string;
+  copied: string;
+  markdownCopied: string;
+  viewOptions: string;
+  openInGitHub: string;
+  viewAsMarkdown: string;
+  /** `{name}` is replaced with the assistant name. */
+  openIn: string;
+  copyCode: string;
+  openNavigation: string;
+  closeNavigation: string;
+  navigation: string;
+  switchToLight: string;
+  switchToDark: string;
+  repository: string;
+  zoomImage: string;
+  closeImage: string;
+  dismiss: string;
+}
+
 /** Where `lastModified` comes from: git commit time, filesystem mtime or nothing. Defaults to "git". */
 export type LastModifiedSource = "git" | "fs" | false;
 
@@ -194,10 +239,16 @@ export interface DocsConfig {
   sidebar?: SidebarConfig;
   header?: HeaderConfig;
   lastModified?: LastModifiedSource;
-  /** Default locale. Files without a locale suffix belong to it. */
+  /** Default locale. With the suffix strategy, files without a suffix belong to it; with the directory strategy it names the source directory. */
   defaultLocale?: string;
-  /** Locales that may appear as file suffixes (`page.de.mdx`, `meta.de.json`). */
+  /** Locales that may appear as file suffixes (`page.de.mdx`, `meta.de.json`) or as directories under `contentDir`. */
   locales?: string[];
+  /** "suffix" (default) or "directory" (`contentDir/<locale>/...`, missing files fall back to the default locale). */
+  localeStrategy?: LocaleStrategy;
+  /** Locale segment in page URLs, for example `/de/docs/intro`. Defaults to "never". */
+  localePrefix?: LocalePrefix;
+  /** UI string overrides per locale, merged over the English defaults. */
+  translations?: Record<string, Partial<UiLabels>>;
 }
 
 /** `DocsConfig` with every default applied. Produced by `defineConfig`. */
@@ -215,6 +266,8 @@ export interface ResolvedDocsConfig extends DocsConfig {
   header: Required<HeaderConfig>;
   lastModified: LastModifiedSource;
   locales: string[];
+  localeStrategy: LocaleStrategy;
+  localePrefix: LocalePrefix;
 }
 
 /** Frontmatter keys the framework understands. Extra keys are kept in `frontmatter`. */

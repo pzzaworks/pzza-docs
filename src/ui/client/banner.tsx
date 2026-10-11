@@ -2,6 +2,7 @@
 
 import { X } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
+import { useLabels } from "./labels.js";
 
 export interface BannerProps {
   /** When set, dismissal is remembered in localStorage under `pd-banner:<id>`. */
@@ -40,6 +41,7 @@ function writeDismissed(id: string): void {
  * offset themselves.
  */
 export function Banner({ id, variant = "normal", children, className }: BannerProps) {
+  const labels = useLabels();
   // Starts hidden when an id exists so a remembered dismissal never flashes the banner.
   const [visible, setVisible] = useState(id === undefined);
 
@@ -66,7 +68,7 @@ export function Banner({ id, variant = "normal", children, className }: BannerPr
   return (
     <div className={["pd-banner", className].filter(Boolean).join(" ")} data-variant={variant} role="region" aria-label="Announcement">
       <div className="pd-banner-content">{children}</div>
-      <button type="button" className="pd-banner-close" onClick={dismiss} aria-label="Dismiss announcement">
+      <button type="button" className="pd-banner-close" onClick={dismiss} aria-label={labels.dismiss}>
         <X size={14} aria-hidden />
       </button>
     </div>

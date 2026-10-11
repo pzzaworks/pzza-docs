@@ -1,7 +1,9 @@
 "use client";
 
 import { Check, ChevronDown, Copy, ExternalLink } from "lucide-react";
+import { fillLabel } from "../../labels.js";
 import { ClaudeIcon, CursorIcon, GitHubIcon, MarkdownIcon, OpenAIIcon } from "./brand-icons.js";
+import { useLabels } from "./labels.js";
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 
 export interface PageActionsProps {
@@ -40,6 +42,7 @@ export function PageActions({ markdownUrl, editUrl, pageUrl, siteUrl }: PageActi
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
+  const labels = useLabels();
 
   const copy = useCallback(async () => {
     if (!markdownUrl) return;
@@ -61,14 +64,14 @@ export function PageActions({ markdownUrl, editUrl, pageUrl, siteUrl }: PageActi
       if (next) {
         const source = markdownUrl ?? pageUrl;
         const list: MenuItem[] = [];
-        if (editUrl) list.push({ label: "Open in GitHub", href: editUrl, external: true, icon: <GitHubIcon /> });
-        if (markdownUrl) list.push({ label: "View as Markdown", href: absolute(markdownUrl, siteUrl), external: true, icon: <MarkdownIcon /> });
+        if (editUrl) list.push({ label: labels.openInGitHub, href: editUrl, external: true, icon: <GitHubIcon /> });
+        if (markdownUrl) list.push({ label: labels.viewAsMarkdown, href: absolute(markdownUrl, siteUrl), external: true, icon: <MarkdownIcon /> });
         if (source) {
           const prompt = encodeURIComponent(promptFor(source, siteUrl));
           list.push(
-            { label: "Open in Claude", href: `https://claude.ai/new?q=${prompt}`, external: true, icon: <ClaudeIcon /> },
-            { label: "Open in ChatGPT", href: `https://chatgpt.com/?hints=search&q=${prompt}`, external: true, icon: <OpenAIIcon /> },
-            { label: "Open in Cursor", href: `https://cursor.com/link/prompt?text=${prompt}`, external: true, icon: <CursorIcon /> },
+            { label: fillLabel(labels.openIn, { name: "Claude" }), href: `https://claude.ai/new?q=${prompt}`, external: true, icon: <ClaudeIcon /> },
+            { label: fillLabel(labels.openIn, { name: "ChatGPT" }), href: `https://chatgpt.com/?hints=search&q=${prompt}`, external: true, icon: <OpenAIIcon /> },
+            { label: fillLabel(labels.openIn, { name: "Cursor" }), href: `https://cursor.com/link/prompt?text=${prompt}`, external: true, icon: <CursorIcon /> },
           );
         }
         setItems(list);
@@ -129,9 +132,9 @@ export function PageActions({ markdownUrl, editUrl, pageUrl, siteUrl }: PageActi
       {markdownUrl ? (
         <button type="button" className="pd-page-action" onClick={() => void copy()} data-copied={copied ? "" : undefined}>
           {copied ? <Check size={14} aria-hidden /> : <Copy size={14} aria-hidden />}
-          <span>{copied ? "Copied" : "Copy Markdown"}</span>
+          <span>{copied ? labels.copied : labels.copyMarkdown}</span>
           <span className="pd-visually-hidden" aria-live="polite">
-            {copied ? "Markdown copied to clipboard" : ""}
+            {copied ? labels.markdownCopied : ""}
           </span>
         </button>
       ) : null}
@@ -150,11 +153,11 @@ export function PageActions({ markdownUrl, editUrl, pageUrl, siteUrl }: PageActi
           }
         }}
       >
-        <span>View options</span>
+        <span>{labels.viewOptions}</span>
         <ChevronDown size={14} className="pd-page-action-chevron" aria-hidden />
       </button>
       {open ? (
-        <div id={menuId} ref={menuRef} className="pd-page-actions-menu" role="menu" aria-label="View options" onKeyDown={onMenuKeyDown}>
+        <div id={menuId} ref={menuRef} className="pd-page-actions-menu" role="menu" aria-label={labels.viewOptions} onKeyDown={onMenuKeyDown}>
           {items.map((item) => (
             <a
               key={item.label}

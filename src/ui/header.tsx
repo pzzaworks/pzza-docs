@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { isValidElement, type ReactNode } from "react";
-import type { DocsConfig, HeaderTransparentMode, ImageLogo, PageTreeNode } from "../types.js";
+import { DEFAULT_LABELS } from "../labels.js";
+import type { DocsConfig, HeaderTransparentMode, ImageLogo, PageTreeNode, UiLabels } from "../types.js";
 import { GitHubIcon } from "./client/brand-icons.js";
 import { HeaderShell } from "./client/header-shell.js";
 import { MobileNav } from "./client/mobile-nav.js";
@@ -25,6 +26,8 @@ export interface HeaderProps {
   end?: ReactNode;
   /** Rendered above the tree inside the mobile drawer. */
   sidebarBanner?: ReactNode;
+  /** UI strings for the current locale. */
+  labels?: Partial<UiLabels>;
 }
 
 function isImageLogo(logo: DocsConfig["logo"]): logo is ImageLogo {
@@ -48,8 +51,9 @@ function Logo({ config }: { config: DocsConfig }) {
 }
 
 /** Sticky 48px header: logo, nav tabs, search trigger, repository link, theme toggle and optional CTA. */
-export function Header({ config, tree, transparentMode, icons, className, start, end, sidebarBanner }: HeaderProps) {
+export function Header({ config, tree, transparentMode, icons, className, start, end, sidebarBanner, labels }: HeaderProps) {
   const links = config.nav?.links ?? [];
+  const text = { ...DEFAULT_LABELS, ...labels };
   const sidebarIcons = icons ?? (tree ? collectTreeIcons(tree) : undefined);
   return (
     <HeaderShell transparentMode={transparentMode ?? config.header?.transparentMode ?? "none"} className={className}>
@@ -86,7 +90,7 @@ export function Header({ config, tree, transparentMode, icons, className, start,
               href={config.nav.github}
               target="_blank"
               rel="noreferrer noopener"
-              aria-label="Repository"
+              aria-label={text.repository}
             >
               <GitHubIcon />
             </a>

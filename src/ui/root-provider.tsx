@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { ResolvedThemeConfig, SearchConfig, ThemeConfig } from "../types.js";
+import type { ResolvedThemeConfig, SearchConfig, ThemeConfig, UiLabels } from "../types.js";
 import { RootProviderClient } from "./client/root-provider.js";
 import { ThemeStyles } from "./theme-styles.js";
 
@@ -8,6 +8,8 @@ export interface RootProviderProps {
   /** Pass `config.theme`. A partial `ThemeConfig` is accepted and resolved with defaults. */
   theme?: ThemeConfig;
   search?: SearchConfig;
+  /** UI strings for the current locale. Pass `resolveLabels(config, locale)`; omit for English. */
+  labels?: Partial<UiLabels>;
 }
 
 function resolveTheme(theme: ThemeConfig | undefined): ResolvedThemeConfig {
@@ -26,12 +28,12 @@ function resolveTheme(theme: ThemeConfig | undefined): ResolvedThemeConfig {
  * overrides on the server and hands only the serialisable bits (default theme,
  * hotkeys, search options) to the client provider.
  */
-export function RootProvider({ children, theme, search }: RootProviderProps) {
+export function RootProvider({ children, theme, search, labels }: RootProviderProps) {
   const resolved = resolveTheme(theme);
   return (
     <>
       <ThemeStyles theme={resolved} />
-      <RootProviderClient defaultTheme={resolved.defaultTheme} themeHotKey={resolved.hotKey} search={search}>
+      <RootProviderClient defaultTheme={resolved.defaultTheme} themeHotKey={resolved.hotKey} search={search} labels={labels}>
         {children}
       </RootProviderClient>
     </>

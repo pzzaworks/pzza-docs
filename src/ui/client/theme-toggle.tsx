@@ -3,6 +3,7 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { useLabels } from "./labels.js";
 
 export interface ThemeToggleProps {
   className?: string;
@@ -12,6 +13,7 @@ export interface ThemeToggleProps {
 export function ThemeToggle({ className }: ThemeToggleProps) {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const labels = useLabels();
 
   useEffect(() => setMounted(true), []);
 
@@ -21,7 +23,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       type="button"
       className={["pd-icon-button", className].filter(Boolean).join(" ")}
       onClick={() => setTheme(dark ? "light" : "dark")}
-      aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
+      aria-label={dark ? labels.switchToLight : labels.switchToDark}
       data-theme-toggle
     >
       {dark ? <Sun size={16} aria-hidden /> : <Moon size={16} aria-hidden />}

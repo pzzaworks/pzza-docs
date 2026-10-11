@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import type { BreadcrumbItem, Neighbours, PageTreeNode, TocItem } from "../types.js";
+import { DEFAULT_LABELS } from "../labels.js";
+import type { BreadcrumbItem, Neighbours, PageTreeNode, TocItem, UiLabels } from "../types.js";
 import { Breadcrumbs } from "./client/breadcrumbs.js";
 import { PageActions } from "./client/page-actions.js";
 import { Pagination } from "./client/pagination.js";
@@ -23,15 +24,19 @@ export interface DocsPageProps {
   markdownUrl?: string;
   /** Pass `config.siteUrl` so assistant prompts and "View as Markdown" get an absolute URL (an absolute `markdownUrl` works too). */
   siteUrl?: string;
+  /** BCP 47 tag used to format the last-modified date. Defaults to "en-US". */
+  locale?: string;
+  /** UI strings for the current locale, for the server-rendered footer. */
+  labels?: Partial<UiLabels>;
   className?: string;
   children: ReactNode;
 }
 
-function formatDate(value: Date | string): { iso: string; label: string } {
+function formatDate(value: Date | string, locale: string): { iso: string; label: string } {
   const date = typeof value === "string" ? new Date(value) : value;
   return {
     iso: date.toISOString(),
-    label: date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
+    label: date.toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" }),
   };
 }
 
@@ -39,8 +44,9 @@ function formatDate(value: Date | string): { iso: string; label: string } {
 const POWERED_BY_HREF = "https://docs.pzza.works";
 
 /** Article column with breadcrumbs, page actions, prose body, right-hand TOC and footer navigation. */
-export function DocsPage({ toc = [], tree, url, breadcrumbs, neighbours, full, lastModified, editUrl, markdownUrl, siteUrl, className, children }: DocsPageProps) {
-  const date = lastModified ? formatDate(lastModified) : undefined;
+export function DocsPage({ toc = [], tree, url, breadcrumbs, neighbours, full, lastModified, editUrl, markdownUrl, siteUrl, locale = "en-US", labels, className, children }: DocsPageProps) {
+  const date = lastModified ? formatDate(lastModified, locale) : undefined;
+  const text = { ...DEFAULT_LABELS, ...labels };
   const showBreadcrumbs = Boolean(breadcrumbs || tree);
   const showActions = Boolean(markdownUrl || editUrl);
   return (
@@ -58,7 +64,7 @@ export function DocsPage({ toc = [], tree, url, breadcrumbs, neighbours, full, l
           <div className="pd-page-meta">
               {date ? (
                 <span>
-                  Last updated <time dateTime={date.iso}>{date.label}</time>
+                  {text.lastUpdated} <time dateTime={date.iso}>{date.label}</time>
                 </span>
               ) : null}
               <a href={POWERED_BY_HREF} target="_blank" rel="noreferrer noopener" className="pd-powered-by">

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { DocsConfig, PageTreeNode } from "../types.js";
+import type { DocsConfig, PageTreeNode, UiLabels } from "../types.js";
 import { Sidebar } from "./client/sidebar.js";
 import { Header } from "./header.js";
 import { collectTreeIcons } from "./icons.js";
@@ -16,15 +16,17 @@ export interface DocsLayoutProps {
   /** Custom header content, see `Header` `start` and `end`. */
   headerStart?: ReactNode;
   headerEnd?: ReactNode;
+  /** UI strings for the current locale, see `resolveLabels`. Client components read them from `RootProvider`; pass them here too for the server-rendered parts. */
+  labels?: Partial<UiLabels>;
 }
 
 /** Header + sidebar + main column. Place it in the route layout that wraps the docs pages. */
-export function DocsLayout({ tree, config, children, sidebarFooter, sidebarBanner, className, headerStart, headerEnd }: DocsLayoutProps) {
+export function DocsLayout({ tree, config, children, sidebarFooter, sidebarBanner, className, headerStart, headerEnd, labels }: DocsLayoutProps) {
   // Icon names are resolved once here so both sidebars (desktop and drawer) share the elements.
   const icons = collectTreeIcons(tree);
   return (
     <div className={["pd-layout", className].filter(Boolean).join(" ")}>
-      <Header config={config} tree={tree} icons={icons} start={headerStart} end={headerEnd} sidebarBanner={sidebarBanner} />
+      <Header config={config} tree={tree} icons={icons} start={headerStart} end={headerEnd} sidebarBanner={sidebarBanner} labels={labels} />
       <div className="pd-layout-body">
         <aside className="pd-sidebar-column">
           <Sidebar

@@ -63,6 +63,7 @@ Write content in `content/docs/*.mdx`, order it with `meta.json`, and import `pz
 - **Diagrams and Math**: Mermaid fences render as theme-aware diagrams and TeX math renders with KaTeX
 - **Search**: Structured client-side index over pages, headings, and paragraphs with a command palette
 - **Theming**: Plain CSS tokens with presets, density, fonts, and radius configured from one object, no utility framework required
+- **Localization**: Suffix or per-directory locale files with fallback, locale-prefixed URLs, and translatable UI strings
 - **LLM Outputs**: `llms.txt`, `llms-full.txt`, per-page Markdown, and copy or open-in-assistant page actions
 - **Server-first**: React Server Components, runtime MDX compilation with caching, static generation ready
 

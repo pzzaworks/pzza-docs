@@ -2,7 +2,8 @@
 
 import { ThemeProvider, useTheme } from "next-themes";
 import { createContext, lazy, Suspense, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import type { SearchConfig, ThemeName } from "../../types.js";
+import type { SearchConfig, ThemeName, UiLabels } from "../../types.js";
+import { LabelsProvider } from "./labels.js";
 
 export interface SearchContextValue {
   enabled: boolean;
@@ -25,6 +26,8 @@ export interface RootProviderClientProps {
   /** Whether the D key toggles the color scheme. */
   themeHotKey?: boolean;
   search?: SearchConfig;
+  /** UI strings for the current locale, see `resolveLabels`. */
+  labels?: Partial<UiLabels>;
 }
 
 // The dialog code (scoring, grouping, list rendering) is only downloaded on the first open.
@@ -75,7 +78,7 @@ function Hotkeys({ searchEnabled, searchKey, themeHotKey, open, toggleSearch }: 
  * The consumer puts `suppressHydrationWarning` on `<html>` because the theme
  * script sets the class before React hydrates.
  */
-export function RootProviderClient({ children, defaultTheme = "system", themeHotKey = true, search }: RootProviderClientProps) {
+export function RootProviderClient({ children, defaultTheme = "system", themeHotKey = true, search, labels }: RootProviderClientProps) {
   const [open, setOpenState] = useState(false);
   const [everOpened, setEverOpened] = useState(false);
   const enabled = search?.enabled ?? true;
@@ -102,15 +105,17 @@ export function RootProviderClient({ children, defaultTheme = "system", themeHot
 
   return (
     <ThemeProvider attribute="class" defaultTheme={defaultTheme} enableSystem disableTransitionOnChange>
-      <SearchContext.Provider value={value}>
-        <Hotkeys searchEnabled={enabled} searchKey={searchKey} themeHotKey={themeHotKey} open={open} toggleSearch={toggleSearch} />
-        {children}
-        {enabled && everOpened ? (
-          <Suspense fallback={null}>
-            <SearchDialog />
-          </Suspense>
-        ) : null}
-      </SearchContext.Provider>
+      <LabelsProvider labels={labels}>
+        <SearchContext.Provider value={value}>
+          <Hotkeys searchEnabled={enabled} searchKey={searchKey} themeHotKey={themeHotKey} open={open} toggleSearch={toggleSearch} />
+          {children}
+          {enabled && everOpened ? (
+            <Suspense fallback={null}>
+              <SearchDialog />
+            </Suspense>
+          ) : null}
+        </SearchContext.Provider>
+      </LabelsProvider>
     </ThemeProvider>
   );
 }

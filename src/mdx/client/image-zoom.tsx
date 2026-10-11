@@ -2,12 +2,14 @@
 
 import { X } from "lucide-react";
 import { useEffect, useRef, useState, type ComponentPropsWithoutRef } from "react";
+import { useLabels } from "../../ui/client/labels.js";
 
 export type ImageZoomProps = ComponentPropsWithoutRef<"img">;
 
 /** Image that opens in a lightbox on click. Escape, the close button and clicking anywhere close it. */
 export function ImageZoom({ className, alt, src, ...rest }: ImageZoomProps) {
   const [open, setOpen] = useState(false);
+  const labels = useLabels();
   const closeRef = useRef<HTMLButtonElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -40,13 +42,13 @@ export function ImageZoom({ className, alt, src, ...rest }: ImageZoomProps) {
         type="button"
         className="pd-image-zoom-trigger"
         onClick={() => setOpen(true)}
-        aria-label={label ? `Zoom image: ${label}` : "Zoom image"}
+        aria-label={label ? `${labels.zoomImage}: ${label}` : labels.zoomImage}
       >
         <img className={["pd-img", className].filter(Boolean).join(" ")} alt={label} src={src} loading="lazy" {...rest} />
       </button>
       {open ? (
         <div className="pd-image-zoom-overlay" role="dialog" aria-modal="true" aria-label="Image" onClick={() => setOpen(false)}>
-          <button ref={closeRef} type="button" className="pd-image-zoom-close" aria-label="Close image" onClick={() => setOpen(false)}>
+          <button ref={closeRef} type="button" className="pd-image-zoom-close" aria-label={labels.closeImage} onClick={() => setOpen(false)}>
             <X size={18} aria-hidden />
           </button>
           <img className="pd-image-zoom-full" src={src} alt={label} />

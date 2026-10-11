@@ -3,6 +3,7 @@
 import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useLabels } from "./labels.js";
 
 export interface MobileNavProps {
   /** Drawer contents, typically the sidebar. */
@@ -23,6 +24,7 @@ function focusables(root: HTMLElement): HTMLElement[] {
  * layout inert while open.
  */
 export function MobileNav({ children, brand }: MobileNavProps) {
+  const labels = useLabels();
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -87,7 +89,7 @@ export function MobileNav({ children, brand }: MobileNavProps) {
         type="button"
         className="pd-icon-button pd-mobile-trigger"
         onClick={() => setOpen((o) => !o)}
-        aria-label={open ? "Close navigation" : "Open navigation"}
+        aria-label={open ? labels.closeNavigation : labels.openNavigation}
         aria-expanded={open}
         aria-controls="pd-mobile-drawer"
       >
@@ -101,13 +103,13 @@ export function MobileNav({ children, brand }: MobileNavProps) {
             className="pd-mobile-drawer"
             role="dialog"
             aria-modal="true"
-            aria-label="Navigation"
+            aria-label={labels.navigation}
             tabIndex={-1}
             onClick={(event) => event.stopPropagation()}
           >
             <div className="pd-mobile-drawer-bar">
               {brand}
-              <button ref={closeRef} type="button" className="pd-mobile-drawer-close" onClick={() => setOpen(false)} aria-label="Close navigation">
+              <button ref={closeRef} type="button" className="pd-mobile-drawer-close" onClick={() => setOpen(false)} aria-label={labels.closeNavigation}>
                 <X size={16} aria-hidden />
               </button>
             </div>

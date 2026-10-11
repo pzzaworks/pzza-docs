@@ -2,6 +2,7 @@
 
 import { Check, Copy } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useLabels } from "../../ui/client/labels.js";
 
 export interface CopyButtonProps {
   /** Text written to the clipboard. When omitted the nearest `<pre>` is read instead. */
@@ -24,6 +25,7 @@ function readPre(button: HTMLButtonElement): string {
 
 export function CopyButton({ text, className }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
+  const labels = useLabels();
   const ref = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -43,12 +45,12 @@ export function CopyButton({ text, className }: CopyButtonProps) {
       type="button"
       className={["pd-copy", className].filter(Boolean).join(" ")}
       onClick={onClick}
-      aria-label="Copy code"
+      aria-label={labels.copyCode}
       data-copied={copied ? "" : undefined}
     >
       {copied ? <Check size={14} aria-hidden /> : <Copy size={14} aria-hidden />}
       <span className="pd-sr-only" aria-live="polite">
-        {copied ? "Copied" : ""}
+        {copied ? labels.copied : ""}
       </span>
     </button>
   );

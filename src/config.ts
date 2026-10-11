@@ -59,5 +59,7 @@ export function defineConfig(config: DocsConfig): ResolvedDocsConfig {
     },
     lastModified: config.lastModified ?? "git",
     locales: config.locales ?? [],
+    localeStrategy: config.localeStrategy ?? "suffix",
+    localePrefix: config.localePrefix ?? "never",
   };
 }

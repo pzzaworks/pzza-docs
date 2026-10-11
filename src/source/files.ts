@@ -1,8 +1,9 @@
 import { createHash } from "node:crypto";
+import type { Dirent } from "node:fs";
 import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
-import type { LastModifiedSource, MetaFile, PageData, PageFrontmatter } from "../types.js";
+import type { LastModifiedSource, LocalePrefix, LocaleStrategy, MetaFile, PageData, PageFrontmatter } from "../types.js";
 import { getGitLastModified } from "./git.js";
 
 const PAGE_EXTENSIONS = new Set([".mdx", ".md"]);
@@ -88,7 +89,17 @@ export interface FileStoreOptions {
   contentDir: string;
   baseUrl: string;
   locales: readonly string[];
+  defaultLocale?: string;
+  strategy: LocaleStrategy;
+  prefix: LocalePrefix;
   lastModified: LastModifiedSource;
+}
+
+/** The page fields that depend on which locale is being served rather than on the file. */
+interface FileIdentity {
+  slug: string[];
+  file: string;
+  stem: string;
 }
 
 /**
@@ -101,15 +112,54 @@ export class FileStore {
   readonly contentDir: string;
   private readonly baseUrl: string;
   private readonly locales: readonly string[];
+  private readonly defaultLocale: string | undefined;
+  private readonly strategy: LocaleStrategy;
+  private readonly prefix: LocalePrefix;
   private readonly lastModifiedSource: LastModifiedSource;
 
   constructor(options: FileStoreOptions) {
     this.contentDir = options.contentDir;
     this.baseUrl = options.baseUrl;
     this.locales = options.locales;
+    this.defaultLocale = options.defaultLocale;
+    this.strategy = options.strategy;
+    this.prefix = options.prefix;
     this.lastModifiedSource = options.lastModified;
+    if (this.strategy === "directory" && !this.defaultLocale) {
+      throw new Error('The "directory" locale strategy needs `defaultLocale`: it names the directory holding the source content.');
+    }
+    if (this.prefix === "always" && !this.defaultLocale) {
+      throw new Error('`localePrefix: "always"` needs `defaultLocale` so the default locale can be prefixed too.');
+    }
   }
 
+  /** Content root for a locale: `contentDir/<locale>` with the directory strategy, `contentDir` otherwise. */
+  private rootFor(locale: string | undefined): string {
+    if (this.strategy !== "directory") return this.contentDir;
+    return path.join(this.contentDir, locale ?? this.defaultLocale ?? "");
+  }
+
+  /** The URL prefix pages of a locale get: baseUrl, or `/<locale><baseUrl>` when the prefix setting asks for it. */
+  private baseUrlFor(locale: string | undefined): string {
+    const isDefault = locale === undefined;
+    const name = locale ?? this.defaultLocale;
+    const wantsPrefix = this.prefix === "always" || (this.prefix === "as-needed" && !isDefault);
+    if (!wantsPrefix || !name) return this.baseUrl;
+    return this.baseUrl === "/" ? `/${name}` : `/${name}${this.baseUrl}`;
+  }
+
+  /** Slug and relative paths of a file. With the directory strategy the first path segment is the locale directory, not part of the slug. */
+  private identify(absolutePath: string): FileIdentity {
+    const file = path.relative(this.contentDir, absolutePath).split(path.sep).join("/");
+    const withinRoot = this.strategy === "directory" ? file.split("/").slice(1).join("/") : file;
+    const stem = path.posix.basename(file).replace(/\.(mdx|md)$/i, "");
+    return { slug: slugFromFile(withinRoot, this.locales), file, stem };
+  }
+
+  /**
+   * Reads and caches one file. The page carries the URL of the default locale;
+   * `scan` re-labels it for the locale actually being served.
+   */
   async loadFile(absolutePath: string): Promise<LoadedFile> {
     const info = await stat(absolutePath);
     const cached = this.fileCache.get(absolutePath);
@@ -117,15 +167,13 @@ export class FileStore {
 
     const raw = await readFile(absolutePath, "utf8");
     const parsed = matter(raw);
-    const file = path.relative(this.contentDir, absolutePath).split(path.sep).join("/");
-    const slug = slugFromFile(file, this.locales);
-    const stem = path.posix.basename(file).replace(/\.(mdx|md)$/i, "");
+    const { slug, file, stem } = this.identify(absolutePath);
     const { base, locale } = splitLocale(stem, this.locales);
     const fallback = titleFromName(base === "index" ? (slug[slug.length - 1] ?? "index") : base);
     const page: PageData = {
       ...readFrontmatter(parsed.data, fallback),
       slug,
-      url: urlFromSlug(this.baseUrl, slug),
+      url: urlFromSlug(this.baseUrlFor(undefined), slug),
       path: absolutePath,
       file,
       locale,
@@ -135,6 +183,13 @@ export class FileStore {
     const value: LoadedFile = { page, body: parsed.content };
     this.fileCache.set(absolutePath, { mtimeMs: info.mtimeMs, value });
     return value;
+  }
+
+  /** The page as served for a locale: URL under that locale's prefix and the locale recorded on it. */
+  private localize(page: PageData, locale: string | undefined): PageData {
+    const url = urlFromSlug(this.baseUrlFor(locale), page.slug);
+    if (url === page.url && page.locale === locale) return page;
+    return { ...page, url, locale: locale ?? page.locale };
   }
 
   private async resolveLastModified(file: string, mtimeMs: number, mtime: Date): Promise<Date> {
@@ -159,12 +214,15 @@ export class FileStore {
   }
 
   /**
-   * Walks the content directory for one locale. A file `page.<locale>.mdx`
-   * replaces `page.mdx` for that locale; files of other locales are skipped.
+   * Walks the content for one locale (`undefined` is the default locale).
+   * Suffix strategy: `page.<locale>.mdx` replaces `page.mdx`, other locales'
+   * files are skipped. Directory strategy: `contentDir/<locale>` is laid over
+   * `contentDir/<defaultLocale>` file by file, so untranslated pages still
+   * render in the source language.
    */
   async scan(locale?: string): Promise<ScanResult> {
     const hash = createHash("sha1");
-    const root = await this.scanDir("", locale, hash);
+    const root = this.strategy === "directory" ? await this.scanLocaleDirs("", locale, hash) : await this.scanDir("", locale, hash);
     return { root, hash: hash.digest("hex") };
   }
 
@@ -198,11 +256,61 @@ export class FileStore {
 
     for (const slot of candidates.values()) {
       const chosen = slot.localized ?? slot.default;
-      if (chosen) result.pages.push((await this.loadFile(chosen)).page);
+      if (chosen) result.pages.push(this.localize((await this.loadFile(chosen)).page, locale));
     }
 
     const localizedMeta = locale ? await this.loadMeta(path.join(absoluteDir, `meta.${locale}.json`)) : undefined;
     result.meta = localizedMeta ?? (await this.loadMeta(path.join(absoluteDir, "meta.json")));
+    return result;
+  }
+
+  private async listDir(absoluteDir: string): Promise<Dirent[]> {
+    try {
+      return await readdir(absoluteDir, { withFileTypes: true });
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") return [];
+      throw error;
+    }
+  }
+
+  /** Directory strategy: the default locale's tree with the requested locale's files laid over it. */
+  private async scanLocaleDirs(relativeDir: string, locale: string | undefined, hash: ReturnType<typeof createHash>): Promise<ScannedDir> {
+    const defaultRoot = this.rootFor(undefined);
+    const localeRoot = locale ? this.rootFor(locale) : undefined;
+    const result: ScannedDir = { dir: relativeDir, pages: [], dirs: [] };
+    const subdirs = new Set<string>();
+    const files = new Map<string, string>();
+
+    // The default locale is read first so a translated file of the same name replaces it.
+    const layers = [{ root: defaultRoot, tag: "d" }, ...(localeRoot ? [{ root: localeRoot, tag: locale ?? "" }] : [])];
+    for (const layer of layers) {
+      const absoluteDir = path.join(layer.root, relativeDir);
+      for (const entry of await this.listDir(absoluteDir)) {
+        if (entry.name.startsWith(".") || entry.name.startsWith("_")) continue;
+        const relative = relativeDir ? `${relativeDir}/${entry.name}` : entry.name;
+        const absolute = path.join(absoluteDir, entry.name);
+        if (entry.isDirectory()) {
+          hash.update(`${layer.tag}:d:${relative}\n`);
+          subdirs.add(entry.name);
+          continue;
+        }
+        if (!entry.isFile()) continue;
+        const info = await stat(absolute);
+        hash.update(`${layer.tag}:f:${relative}:${info.mtimeMs}\n`);
+        if (!PAGE_EXTENSIONS.has(path.extname(entry.name).toLowerCase())) continue;
+        files.set(entry.name.replace(/\.(mdx|md)$/i, ""), absolute);
+      }
+    }
+
+    for (const chosen of files.values()) {
+      result.pages.push(this.localize((await this.loadFile(chosen)).page, locale));
+    }
+    for (const name of [...subdirs].sort()) {
+      result.dirs.push(await this.scanLocaleDirs(relativeDir ? `${relativeDir}/${name}` : name, locale, hash));
+    }
+
+    const localizedMeta = localeRoot ? await this.loadMeta(path.join(localeRoot, relativeDir, "meta.json")) : undefined;
+    result.meta = localizedMeta ?? (await this.loadMeta(path.join(defaultRoot, relativeDir, "meta.json")));
     return result;
   }
 }

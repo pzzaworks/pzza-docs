@@ -36,6 +36,12 @@ export interface Source {
 
 interface CompiledCacheEntry {
   mtimeMs: number;
+  toc: CompiledPage["toc"];
+  content: CompiledPage["content"];
+  structure: PageStructure;
+}
+
+interface CompiledPageResult {
   page: CompiledPage;
   structure: PageStructure;
 }
@@ -51,7 +57,15 @@ const WORKING_DIR = process.cwd();
 
 export function createSourceWithComponents(config: ResolvedDocsConfig, components: MDXComponents): Source {
   const contentDir = path.isAbsolute(config.contentDir) ? config.contentDir : path.join(WORKING_DIR, config.contentDir);
-  const store = new FileStore({ contentDir, baseUrl: config.baseUrl, locales: config.locales, lastModified: config.lastModified });
+  const store = new FileStore({
+    contentDir,
+    baseUrl: config.baseUrl,
+    locales: config.locales,
+    defaultLocale: config.defaultLocale,
+    strategy: config.localeStrategy,
+    prefix: config.localePrefix,
+    lastModified: config.lastModified,
+  });
   const compiledCache = new Map<string, CompiledCacheEntry>();
   const codeThemes = resolveCodeThemes(config.theme);
   const treeCache = new Map<string, DerivedCache<PageTreeNode[]>>();
@@ -88,16 +102,18 @@ export function createSourceWithComponents(config: ResolvedDocsConfig, component
     return tree;
   };
 
-  const compilePage = async (data: PageData): Promise<CompiledCacheEntry> => {
+  // The compiled output is cached per file; the page fields come from `data`, which already
+  // carries the URL and locale of the request (one file can serve several locales).
+  const compilePage = async (data: PageData): Promise<CompiledPageResult> => {
     const loaded = await store.loadFile(data.path);
     const mtimeMs = loaded.page.lastModified.getTime();
-    const cached = compiledCache.get(data.path);
-    if (cached && cached.mtimeMs === mtimeMs) return cached;
-
-    const { toc, content, structure } = await compileMdx(loaded.body, loaded.page.path, components, { toc: config.toc, codeThemes, math: config.math });
-    const entry: CompiledCacheEntry = { mtimeMs, page: { ...loaded.page, toc, content }, structure };
-    compiledCache.set(data.path, entry);
-    return entry;
+    let entry = compiledCache.get(data.path);
+    if (!entry || entry.mtimeMs !== mtimeMs) {
+      const { toc, content, structure } = await compileMdx(loaded.body, data.path, components, { toc: config.toc, codeThemes, math: config.math });
+      entry = { mtimeMs, toc, content, structure };
+      compiledCache.set(data.path, entry);
+    }
+    return { page: { ...data, toc: entry.toc, content: entry.content }, structure: entry.structure };
   };
 
   const findPage = async (slug: string[] = [], locale?: string): Promise<PageData | undefined> => {

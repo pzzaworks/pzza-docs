@@ -3,6 +3,7 @@
 import { ChevronDown, Text } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { TocItem } from "../../types.js";
+import { useLabels } from "./labels.js";
 
 export interface TOCProps {
   items: TocItem[];
@@ -17,6 +18,7 @@ export interface TOCProps {
  * an IntersectionObserver over the heading elements.
  */
 export function TOC({ items, className, variant = "auto" }: TOCProps) {
+  const labels = useLabels();
   const [active, setActive] = useState<string | undefined>(items[0]?.id);
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -91,13 +93,13 @@ export function TOC({ items, className, variant = "auto" }: TOCProps) {
         aria-controls="pd-toc-list"
       >
         <Text size={14} aria-hidden />
-        <span className="pd-toc-trigger-text">{current ? current.title : "On this page"}</span>
+        <span className="pd-toc-trigger-text">{current ? current.title : labels.onThisPage}</span>
         <ChevronDown size={14} className="pd-toc-trigger-chevron" aria-hidden />
       </button>
       <div ref={panelRef} className="pd-toc-panel">
         <p className="pd-toc-heading">
           <Text size={14} aria-hidden />
-          On this page
+          {labels.onThisPage}
         </p>
         <ul id="pd-toc-list" ref={listRef} className="pd-toc-list">
           {items.map((item) => (

@@ -4,6 +4,8 @@ import { FileText, Hash, SearchIcon, Text } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { Fragment, useDeferredValue, useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import type { SearchPageRecord, SearchRecord } from "../../types.js";
+import { fillLabel } from "../../labels.js";
+import { useLabels } from "./labels.js";
 import { useSearch } from "./root-provider.js";
 
 interface Hit {
@@ -146,6 +148,7 @@ function optionDomId(index: number): string {
 
 /** Command-palette style dialog. Rendered lazily by `RootProvider`; open it with `useSearch().setOpen(true)` or the hotkey. */
 export function Search() {
+  const labels = useLabels();
   const { open, setOpen, indexUrl } = useSearch();
   const router = useRouter();
   const pathname = usePathname();
@@ -170,7 +173,7 @@ export function Search() {
         if (!cancelled) setRecords(Array.isArray(data) ? data : []);
       })
       .catch((err: unknown) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : "Could not load search index");
+        if (!cancelled) setError(err instanceof Error ? err.message : labels.searchError);
       });
     return () => {
       cancelled = true;
@@ -253,8 +256,8 @@ export function Search() {
   const trimmed = deferredQuery.trim();
   let status: string | null = null;
   if (error) status = error;
-  else if (records === null) status = "Loading...";
-  else if (trimmed !== "" && options.length === 0 && !stale) status = `No results for "${trimmed}"`;
+  else if (records === null) status = labels.searchLoading;
+  else if (trimmed !== "" && options.length === 0 && !stale) status = fillLabel(labels.searchNoResults, { query: trimmed });
 
   // Options are numbered globally across groups so aria-activedescendant and the data-index lookup stay simple.
   const offsets: number[] = [];
@@ -270,7 +273,7 @@ export function Search() {
         className="pd-search-dialog"
         role="dialog"
         aria-modal="true"
-        aria-label="Search documentation"
+        aria-label={labels.searchDialog}
         onClick={(event) => event.stopPropagation()}
       >
         <div className="pd-search-input-row">
@@ -279,7 +282,7 @@ export function Search() {
             ref={inputRef}
             className="pd-search-input"
             type="search"
-            placeholder="Search documentation..."
+            placeholder={labels.searchPlaceholder}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             onKeyDown={onKeyDown}
@@ -301,7 +304,7 @@ export function Search() {
           ref={listRef}
           className="pd-search-results"
           role="listbox"
-          aria-label="Results"
+          aria-label={labels.searchResults}
           data-stale={stale ? "" : undefined}
         >
           {groups.map((group, gi) => {

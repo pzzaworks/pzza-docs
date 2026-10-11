@@ -63,6 +63,7 @@ export default defineConfig(async () => [
     ...shared,
     entry: await clientEntries(),
     platform: "browser",
-    external: [...(shared.external ?? []), /^\.\/[^/]+\.js$/],
+    // Sibling client modules and the shared labels context stay external so React contexts are not duplicated per bundle.
+    external: [...(shared.external ?? []), /^\.\/[^/]+\.js$/, /^\.\.\/\.\.\/ui\/client\/labels\.js$/],
   },
 ]);

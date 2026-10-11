@@ -9,6 +9,7 @@ export { COLOR_TOKENS, DENSITY_TOKENS, resolveThemeCss, resolveThemeTokens, toCs
 export { CODE_TOKEN_DEFAULTS, resolveCodeThemes } from "./source/code/themes.js";
 export type { ThemeTokens } from "./theme/css.js";
 export { THEME_PRESETS } from "./theme/presets.js";
+export { DEFAULT_LABELS, fillLabel, resolveLabels } from "./labels.js";
 export type { PresetDefinition } from "./theme/presets.js";
 export type { Source, SourceOptions };
 export {
@@ -31,6 +32,9 @@ export type {
   ImageLogo,
   LastModifiedSource,
   LlmConfig,
+  LocalePrefix,
+  LocaleStrategy,
+  UiLabels,
   MetaFile,
   NavConfig,
   NavLink,

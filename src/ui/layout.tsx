@@ -24,6 +24,8 @@ export interface DocsLayoutProps {
 export function DocsLayout({ tree, config, children, sidebarFooter, sidebarBanner, className, headerStart, headerEnd, labels }: DocsLayoutProps) {
   // Icon names are resolved once here so both sidebars (desktop and drawer) share the elements.
   const icons = collectTreeIcons(tree);
+  // Header nav tabs already switch between sections, so the sidebar's own root list would duplicate them.
+  const showRoots = (config.nav?.links?.length ?? 0) === 0;
   return (
     <div className={["pd-layout", className].filter(Boolean).join(" ")}>
       <Header config={config} tree={tree} icons={icons} start={headerStart} end={headerEnd} sidebarBanner={sidebarBanner} labels={labels} />
@@ -35,6 +37,7 @@ export function DocsLayout({ tree, config, children, sidebarFooter, sidebarBanne
             header={sidebarBanner}
             defaultOpenLevel={config.sidebar?.defaultOpenLevel}
             prefetch={config.sidebar?.prefetch}
+            showRoots={showRoots}
             footer={sidebarFooter}
           />
         </aside>

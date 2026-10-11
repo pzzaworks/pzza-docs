@@ -19,6 +19,8 @@ export interface SidebarProps {
   prefetch?: boolean;
   /** Icon name (as used in the tree) to element, resolved on the server. */
   icons?: Record<string, ReactNode>;
+  /** Lists the root folders above the tree so readers can switch sections. Defaults to true; `DocsLayout` turns it off when the header nav already links to them. */
+  showRoots?: boolean;
 }
 
 interface TreeContext {
@@ -174,7 +176,7 @@ function RootSwitcher({ tree, ctx }: { tree: PageTreeNode[]; ctx: TreeContext })
 
 const EMPTY_ICONS: Record<string, ReactNode> = {};
 
-export function Sidebar({ tree, header, footer, className, defaultOpenLevel = 0, prefetch = true, icons = EMPTY_ICONS }: SidebarProps) {
+export function Sidebar({ tree, header, footer, className, defaultOpenLevel = 0, prefetch = true, icons = EMPTY_ICONS, showRoots = true }: SidebarProps) {
   const pathname = usePathname();
   const navRef = useRef<HTMLElement>(null);
   const ctx: TreeContext = { pathname, defaultOpenLevel, prefetch, icons };
@@ -196,7 +198,7 @@ export function Sidebar({ tree, header, footer, className, defaultOpenLevel = 0,
   return (
     <nav ref={navRef} className={["pd-sidebar", className].filter(Boolean).join(" ")} aria-label="Documentation">
       {header}
-      <RootSwitcher tree={tree} ctx={ctx} />
+      {showRoots ? <RootSwitcher tree={tree} ctx={ctx} /> : null}
       <Tree nodes={nodes} ctx={ctx} depth={0} />
       {footer}
     </nav>

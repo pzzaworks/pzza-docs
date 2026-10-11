@@ -55,6 +55,8 @@ export function Header({ config, tree, transparentMode, icons, className, start,
   const links = config.nav?.links ?? [];
   const text = { ...DEFAULT_LABELS, ...labels };
   const sidebarIcons = icons ?? (tree ? collectTreeIcons(tree) : undefined);
+  // The drawer shows the nav tabs above the tree, so the root list is only needed without them.
+  const showRoots = links.length === 0;
   return (
     <HeaderShell transparentMode={transparentMode ?? config.header?.transparentMode ?? "none"} className={className}>
       <div className="pd-header-inner">
@@ -66,6 +68,7 @@ export function Header({ config, tree, transparentMode, icons, className, start,
                 icons={sidebarIcons}
                 defaultOpenLevel={config.sidebar?.defaultOpenLevel}
                 prefetch={config.sidebar?.prefetch}
+                showRoots={showRoots}
                 header={
                   <>
                     {links.length > 0 ? <NavTabs links={links} className="pd-nav-tabs-mobile" /> : null}

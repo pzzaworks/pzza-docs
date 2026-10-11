@@ -144,14 +144,17 @@ export function buildFolder(dir: ScannedDir, locales: readonly string[]): PageTr
     children = indexPage ? [pageNode(indexPage), ...rest] : rest;
   }
 
-  let index: PageTreePage | undefined = indexPage ? pageNode(indexPage) : undefined;
+  // A route group only organises the sidebar; it never links anywhere itself, so its index page
+  // stays an ordinary child instead of turning the group label into a link.
+  const group = isRouteGroup(dirName);
+  let index: PageTreePage | undefined = indexPage && !group ? pageNode(indexPage) : undefined;
   if (meta?.pagesIndex) {
     const link = LINK.exec(meta.pagesIndex);
     const resolved = link ? linkNode(link, `${idBase}#index-link`) : lookup(meta.pagesIndex);
     if (resolved?.type === "page") index = resolved;
   }
 
-  const fallbackName = isRouteGroup(dirName) ? titleFromName(dirName.slice(1, -1)) : titleFromName(dirName);
+  const fallbackName = group ? titleFromName(dirName.slice(1, -1)) : titleFromName(dirName);
   return {
     type: "folder",
     $id: idBase,

@@ -1,9 +1,13 @@
 {
   "name": "pzzadocs",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A customizable MDX docs framework for Next.js.",
   "type": "module",
   "license": "MIT",
+  "author": {
+    "name": "Berke (pzzaworks)",
+    "url": "https://pzza.works"
+  },
   "homepage": "https://docs.pzza.works",
   "repository": {
     "type": "git",
